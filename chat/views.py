@@ -3,10 +3,10 @@ from django.shortcuts import render
 
 # Create your views here.
 def index(request):
-    return render(request, 'index.html', {})
+    return render(request, 'chat/index.html', {})
 
 
 def room(request, room_name):
-    return render(request, 'chatroom.html',{
+    return render(request, 'chat/chatroom.html',{
         'room_name':room_name,
     })
