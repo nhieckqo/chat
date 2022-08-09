@@ -15,21 +15,21 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
 
         await self.accept()
 
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': 'tester_message', # a func in this class
-                'tester': 'Hello World', # will be passed as (element of) event arg
-            }
-        )
+        # await self.channel_layer.group_send(
+        #     self.room_group_name,
+        #     {
+        #         'type': 'tester_message', # a func in this class
+        #         'tester': 'Hello World', # will be passed as (element of) event arg
+        #     }
+        # )
 
 
-    async def tester_message(self, event):
-        tester = event['tester']
+    # async def tester_message(self, event):
+    #     tester = event['tester']
 
-        await self.send(text_data=json.dumps({
-            'tester': tester,
-        }))
+    #     await self.send(text_data=json.dumps({
+    #         'tester': tester,
+    #     }))
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(
@@ -40,18 +40,22 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data=None):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
-        print("XXXXXXXXXXXXXXXXX", message)
+        username = text_data_json['username']
+        # print("XXXXXXXXXXXXXXXXX", message)
         await self.channel_layer.group_send(
             self.room_group_name,
             {
                 'type': 'chatroom_message', # a func in this class
                 'message': message, # will be passed as (element of) event arg
+                'username': username, # will be passed as (element of) event arg
             }
         )
 
     async def chatroom_message(self, event):
         message = event['message']
-        print("YYYYYYYYYYYYYYYY", message)
+        username = event['username']
+        # print("YYYYYYYYYYYYYYYY", message)
         await self.send(text_data=json.dumps({
             'message': message,
+            'username': username,
         }))
